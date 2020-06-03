@@ -1,0 +1,194 @@
+*{
+	font-family: Helvetica, sans-serif;
+}
+*::-webkit-scrollbar {
+    display: none;
+}
+.fl { float:left; }
+.fr { float: right; }
+.router-link-active {
+	opacity: 1 !important
+}
+#app {
+	width: 100%;
+	max-width: 700px;
+	margin: auto;
+	border: solid 1px #D9E2DD;
+	min-height: 700px;
+	box-sizing: border-box;
+	padding: 3px
+}
+.router-general {
+	color: blueviolet;
+	text-decoration: none;
+},
+.router-general:hover {
+	cursor: pointer;
+}
+header{
+	display: flex;
+	align-items: center;
+	width: 100%;
+	margin-bottom: 20px
+}
+#logo-container img{
+	max-height: 70px;
+	width: 70px;
+}
+#slogan{
+	margin-left: 30px;
+    font-size: 20px;
+    font-weight: 900;
+    color: indianred;
+}
+.description{
+	padding-left: 5px
+}
+.description-title{
+    font-size: 18px;
+    font-weight: 700;
+    font-family: Helvetica, sans-serif;
+    color: #909C96;
+}
+.navigator{
+	width: 100%;
+    min-height: 30px;
+    overflow: auto;
+    margin: 15px 0;
+}
+.nav-item-contain{
+	overflow: auto;
+    width: max-content;
+    padding: 5px;
+}
+.nav-item{
+    font-weight: inherit;
+    text-transform: inherit;
+    text-decoration: none;
+	padding: 5px 10px;
+    border: 1px solid #bc84ef;
+    color: white;
+    background: #bc84ef;
+    border-radius: 25px;
+    margin: 5px;
+    float: left;
+    cursor: pointer;
+    opacity: 0.3;
+}
+.nav-item img{
+	width: 25px;
+	height: 25px;
+	padding-right: 10px
+}
+.active{
+	opacity: 1
+}
+.nav-item-content{
+	display: flex;
+    align-items: center;
+    color: white;
+}
+.main{
+	width: 100%;
+    min-height: 200px;
+    background: #909c961f;
+}
+.title-booking {
+	color: indianred;
+	margin: 0;
+    padding: 10px 5px 5px;
+}
+.breadcum-booking {
+	margin: 2px;
+	padding: 2px 10px;
+
+}
+.sub-booking-comp {
+	padding: 10px;
+}
+.location-container, .appointment-container {
+	margin: 5px 0
+}
+.location-title, .appointment-title {
+	min-height: 30px;
+    display: flex;
+    align-items: center;
+    background:#bc84ef;
+}
+.location-title:hover, .appointment-title:hover {
+	cursor: pointer;
+}
+.location-name, .appointment-name {
+	font-weight: 600;
+	color: white;
+    font-size: 16px;
+}
+.appointment-name {
+	width: 75%;
+}
+.icon-arrow {
+	width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+	background-image: url(https://thenaillab.mylocalsalon.com/onlinebooking/v7410/images/arrow_up.png);
+}
+.icon-appointment {
+	width: 45px;
+    height: 30px;
+    margin:20px 5px;
+    align-self: end;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+	background-image: url(https://image.flaticon.com/icons/svg/1572/1572663.svg);
+}
+.icon-edit {
+	text-align: right;
+    background: url(https://f1.pngfuel.com/png/372/1006/393/linear-color-web-interface-elements-icon-edit-icon-interface-icon-text-signage-triangle-symbol-electric-blue-neon-logo-png-clip-art.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 30px;
+    background-position: center;
+    height: 30px;
+}
+.location-detail, .appointment-detail {
+	display: flex;
+    align-items: center;
+    background: white;
+}
+.icon-home {
+	width: 50px;
+	height: 30px;
+	background: center no-repeat;
+	background-image: url(https://thenaillab.mylocalsalon.com/onlinebooking/v7410/App_Themes/Default/images/pin.png);
+	
+}
+.title-location-detail, .title-appointment-detail {
+	color: blueviolet; margin: 5px 2px;
+}
+.time-space {
+	padding-left: 20px
+}
+.booking-time-guide {
+	padding: 5px
+}
+.booking-time-guide .note {
+	color: red
+}
+.nav-button {
+	margin: 10px 15px;
+	min-height: 30px;
+	min-width: 100px
+}
+/*Add any layout style here that needs to override the original*/
+body
+{
+background-color:#ffffff;
+}
+/* Main Body Font text-shadow: 0.1em 0.1em white*/
+body, TitleLabel, div, td, p, span, input { color:#909C96; font-family: 'Century Gothic', Helvetica, sans-serif !important; font-size:13px;line-height: 130%;}
+input { font-size:11px; color: #909C96; font-weight:100; }
+/* small links under main online booking heading */
+a { font-size:12px; font-weight:100; color: #F89829; font-weight:bold; text-transform: uppercase;}
+legend { font-size:12px; font-weight:600; color: #F89829;  text-transform: uppercase;}
