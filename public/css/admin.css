@@ -1,0 +1,7 @@
+#left-menu {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 70%;
+	min-width: 300px
+}

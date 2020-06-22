@@ -4,17 +4,17 @@ const path = require('path');
 
 module.exports = {
   entry: {
-  	frontend: './src/frontend.js'
+  	frontend: path.resolve(__dirname, 'src/frontend.js')
   },
   output: {
   	filename: '[name].js',
     path: path.resolve(__dirname, '../../public/js')
   },
-  mode: 'development',
   resolve: {
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
             Components: path.resolve(__dirname, 'src/components/'),
+            AdComponents: path.resolve(__dirname, 'src/ad_components/'),
             Src: path.resolve(__dirname, 'src/'),
             Api: path.resolve(__dirname, 'api/'),
  

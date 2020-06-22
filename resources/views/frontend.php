@@ -87,6 +87,8 @@
 			</section> 
 		</div>
 	</div>
-<script src="<?php echo asset('js/frontend.js')?>"></script></body>
+	<script src="<?php echo asset('js/frontend.js')?>"></script>
+	<!-- <script src="<?php echo asset('js/app.js')?>"></script> -->
+</body>
 </body>
 </html>

@@ -10,7 +10,7 @@ export default {
 		})
 	},
 	login(context, data) {
-		return axios.post('users/login', data).then((res) => {
+		return axios.post('users/cusLogin', data).then((res) => {
 			let resData = res.data;
 			if (!resData.success) {
 				swal('Some thing went wrong, please try again!');

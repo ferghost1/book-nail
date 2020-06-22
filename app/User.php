@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Hash;
+use DB;
 
 class User extends Authenticatable
 {
@@ -16,7 +18,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'social_id', 'social_type'
+        'name', 'email', 'phone', 'password', 'social_id', 'social_type', 'is_trusted', 'is_active',
+        'user_type'
     ];
 
     /**
@@ -25,7 +28,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password'
     ];
 
     /**
@@ -36,4 +39,36 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function service_employees() {
+        return $this->hasMany('App\ServiceEmployee', 'employee_id', 'id');
+    }
+
+    public function getUsers($conditions) {
+        return $this->where($conditions)->get();
+    }
+
+    public function saveUser($data, $where = [], $fields = []) {
+        if (!empty($data['id'])) {
+            $obj = $this->where($where)
+                ->find($data['id']);
+            $obj->fill($data);
+        } else {
+            $obj = new User($data);
+        }
+        if (!empty($data['password']))
+            $obj->password = Hash::make($data['password']);
+        
+        $obj->save();
+        return $fields ? $obj->only($fields) : $obj;
+    }
+
+    public function deleteWithRelation() {
+        if ($this->user_type == 2) {
+            DB::transaction(function () {
+                $this->service_employees()->delete();
+                $this->delete();
+            }, 2);
+        }
+    }
 }
