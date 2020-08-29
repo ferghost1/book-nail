@@ -9,8 +9,12 @@ class ServiceEmployee extends Model
 {
     protected $table = 'service_employees';
     protected $fillable = [
-    	'service_id', 'employee_id'    
+    	'id', 'price', 'service_id', 'employee_id' 
     ];
+
+    public function employee() {
+        return $this->belongsTo('App\User');
+    }
 
     public function saveServiceEmployee($data, $serviceId) {
     	

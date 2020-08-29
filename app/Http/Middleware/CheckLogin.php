@@ -36,7 +36,8 @@ class CheckLogin
 
         $conditions = [
             ['api_token', $authorize],
-            ['user_type', $userType]
+            ['user_type', $userType],
+            ['is_active', 1]
         ];
         $user = User::where($conditions)->whereNotNull('api_token')->first();
 

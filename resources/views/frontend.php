@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Booking nails </title>
+	<link rel="stylesheet" type="text/css" href="<?php echo asset('css/style.css')?>">
 	<script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
 	<script>
 	  window.fbAsyncInit = function() {
@@ -73,6 +74,9 @@
 								Logout
 							</span>
 						</div>
+						<div class="nav-item router-link-active">
+							<a style="color: white" href="/admin">Login Admin</a>
+						</div>
 					</div>
 				</div>
 			</section>
@@ -88,7 +92,6 @@
 		</div>
 	</div>
 	<script src="<?php echo asset('js/frontend.js')?>"></script>
-	<!-- <script src="<?php echo asset('js/app.js')?>"></script> -->
 </body>
 </body>
 </html>

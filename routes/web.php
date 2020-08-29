@@ -19,9 +19,12 @@ use App\Http\Requests\TestMakeRequest;
 Route::get('/', function () {
     return view('frontend');
 });
-
+Route::get('csrf', function () {
+    return csrf_token();
+});
 // customer login
 Route::post('users/cusLogin', 'UserController@cusLogin');
+Route::post('users/checkCusLogin', 'UserController@checkCusLogin');
 
 // admin login
 Route::get('login', function () {
@@ -42,14 +45,17 @@ Route::middleware(['checkLogin:2,login'])->group(function () {
 });
 
 // logout for all type users
-Route::post('users/logout', 'UserController@login');
+Route::post('users/logout', 'UserController@logout');
 
 
 // get service every type can access
 Route::get('booking/getLocations', 'BookingController@getLocations');
 Route::get('booking/Services', 'BookingController@getServices');
+Route::get('booking/getServiceByLocation', 'BookingController@getServiceByLocation');
+Route::get('booking/getServiceRelation', 'BookingController@getServiceRelation');
 Route::get('booking/getServiceEmployees', 'BookingController@getServiceEmployees');
-Route::get('booking/getEmployeeBooked', 'BookingController@getEmployeeBooked');
+Route::get('booking/getEmployeeBookedTime', 'BookingController@getEmployeeBookedTime');
+Route::get('booking/getEmployeeByLocation', 'BookingController@getEmployeeByLocation');
 
 // type user = 3 is customers
 Route::middleware(['checkLogin:3'])->group(function () {
@@ -68,6 +74,7 @@ Route::middleware(['checkLogin:2'])->group(function () {
 Route::middleware(['checkLogin:1'])->group(function () {
 	Route::post('admin/saveLocation', 'AdminController@saveLocation');
 	Route::post('admin/deleteLocation', 'AdminController@deleteLocation');
+	Route::get('admin/getServiceByLocation', 'AdminController@getServiceByLocation');
 	Route::post('admin/saveService', 'AdminController@saveService');
 	Route::post('admin/deleteService', 'AdminController@deleteService');
 	Route::post('admin/saveEmployee', 'AdminController@saveEmployee');
@@ -78,5 +85,5 @@ Route::middleware(['checkLogin:1'])->group(function () {
 	// Route::post('admin/changeStatusAppointment', 'AdminController@changeStatusAppointment');
 	Route::get('admin/getUsers', 'AdminController@getUsers');
 	Route::post('admin/changeUserActive', 'AdminController@changeUserActive');
-	Route::post('admin/saveUserProfile', 'AdminController@saveUserProfile');
+	Route::post('admin/saveCustomer', 'AdminController@saveCustomer');
 });

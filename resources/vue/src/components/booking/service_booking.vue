@@ -9,8 +9,8 @@
       </select>
       <select v-model="bookData.employee_id" @change="changeEmployee()">
         <option value="0" disabled > Select employee</option>
-        <option v-for=" employeeService in employeeByService" :value="employeeService.employee_id">
-          {{employeeService.name}} {{employeeService.price}}
+        <option v-for=" emp in employeeByService" :value="emp.employee_id">
+          {{emp.emp_name}} {{emp.price}}$
         </option>
       </select>
     </p>
@@ -37,9 +37,13 @@
       </div>
     </div>
     <div class="navigate-booking">
-      <button class="fl nav-button" @click="step = 1">Prev</button>
+      <button class="fl nav-button" @click="resetBookData()">Cancel</button>
       <button class="fr nav-button" @click="book()">Book</button>
     </div>
+
+    <!-- Sync when change location or get booked time of employee when change info-->
+    <input type="hidden" v-if="changeLocation + getEmployeeBookedTime">
+
   </div>
 </template>
 
@@ -49,53 +53,85 @@
   import swal from 'sweetalert';
 
   const data = {
-    registerBy: 'cService'
+    registerBy: 'cService',
+    services: [],
+    employees: [],
+    employeeBookedTime: [],
+    serviceRelations: [],
+    bookData: null
   };
 
   var comp = {
     data() { return data},
     methods:{
-      book() {
-        // check login
-        if (_.isEmpty(this.user)) {
-          swal({text: "You need to login before continue"}).then(this.$router.push('login'));
-          return;
-        }
+        getServices() {
+            bookingApi.getServiceByLocation(this.bookData.location_id).then(res => this.services = res);
+        },
+        getEmployees() {
+            bookingApi.getEmployeeByLocation(this.bookData.location_id).then(res => this.employees = res);
+        },
+        getEmployeeSchedule() {
+            bookingApi.getEmployeeBookedTime(this.bookData.employee_id, this.bookData.date, [this.bookData.id]).then(res => this.employeeBookedTime = res);
+        },
+        getServiceRelation() {
+            bookingApi.getServiceRelation(this.bookData.location_id).then(res => this.serviceRelations = res);
+        },
+        book() {
+            // check login
+            if (_.isEmpty(this.user)) {
+                swal({text: "You need to login before continue"}).then(this.$router.push('login'));
+                return;
+            }
 
-        // check whether customer select service, employee and there selected prop be in list
-        let selectedService = _.find(this.services, {id: this.bookData.service_id});
-        let selectedEmployee = _.find(this.employeeByService, {employee_id: this.bookData.employee_id});
-        let selectedTimespace = _.difference(this.bookData.time_space, this.employeeBookedTime);
-        if (!selectedService || !selectedEmployee || _.isEmpty(selectedTimespace)) {
-          swal('Please choose your appointment before continue');
-          return;
-        }
+            // check whether customer select service, employee and there selected prop be in list
+            let selectedService = _.find(this.services, ser => ser.id == this.bookData.service_id);
+            let selectedEmployee = _.find(this.serviceRelations, sr => sr.employee_id == this.bookData.employee_id);
+            let selectedTimespace = _.difference(this.bookData.time_space, this.employeeBookedTime);
 
-        // confirm book
-        swal({
-          title: "Are you done?",
-          text: "Please make sure you will visit at time, thank you",
-          icon: "success",
-          buttons: true
-        }).then(isDone => {
-          if (isDone) {
-            this.bookData.customer_id = this.user.id;
+            if (!selectedService || !selectedEmployee || _.isEmpty(selectedTimespace)) {
+                swal('Please fulfill your appointment to continue');
+                return;
+            }
 
-            // save appointment here
-            bookingApi.book(this.bookData);
+            // confirm book
+            swal({
+                title: "Are you done?",
+                text: "Please make sure you will visit at time, thank you",
+                icon: "success",
+                buttons: true
+            }).then(isDone => {
+                if (isDone) {
+                    // save appointment here
+                    let data = this.bookData;
+                    
+                    bookingApi.book(this.bookData).then(res => {
+                        console.log(res);
+                        if (!res.success)
+                            swal('can not book please try again');
 
-            // make new data appointment
-            this.getComp('booking').newAppointment();
-            this.$router.push('manage_appointment');
-          }
-        });
-      },
+                        this.getComp('booking').newAppointment();
+                        this.getComp('manageAppointment') && this.getComp('manageAppointment').getAppointments();
+                        this.$router.push('manage_appointment');
+                    });
+                    // make new data appointment
+                    
+                }
+            });
+        },
+        resetBookData() {
+            swal({
+                title: "Reset this process?",
+                icon: "warning",
+                buttons: true
+            }).then(isDone => {
+                isDone && this.getComp('booking').newAppointment();
+            });
+        },
       changeDate() {
         this.bookData.time_space = [];
       },
       changeEmployee() {
         this.bookData.time_space = [];
-        console.log('change employee');
       },
       changeService() {
         this.bookData.employee_id = 0;
@@ -109,22 +145,17 @@
       this.bookData = this.getComp('booking').bookData;
     },
     computed: {
-      services() {
-        return bookingApi.getServiceByLocation(this.bookData.location_id);
-      },
-      employeeByService() {
-        return bookingApi.getEmployeesByServices(this.bookData.service_id) || [];
-      },
-      employeeBookedTime() {
-        let self = this;
-        let schedules = bookingApi.getEmployeeSchedule(this.bookData.employee_id, this.bookData.date);
-        // In case update
-        _.remove(schedules, {id: this.bookData.id});
-        let bookedTime = _.union(_.map(schedules, 'booked_time'));
-        // remove selected time space from book time
-        _.remove(this.bookData.time_space, time => _.includes(bookedTime, time));
-        return bookedTime;
-      }
+        changeLocation() {
+            this.getServices();
+            this.getEmployees();
+            this.getServiceRelation();
+         },
+         getEmployeeBookedTime() {
+            this.getEmployeeSchedule();
+         },
+         employeeByService() {
+            return _.filter(this.serviceRelations, se => se.service_id == this.bookData.service_id);
+         }
     }
   };
 

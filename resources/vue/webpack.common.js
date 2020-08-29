@@ -4,7 +4,8 @@ const path = require('path');
 
 module.exports = {
   entry: {
-  	frontend: path.resolve(__dirname, 'src/frontend.js')
+  	frontend: path.resolve(__dirname, 'src/frontend.js'),
+    admin: path.resolve(__dirname, 'src/admin.js')
   },
   output: {
   	filename: '[name].js',

@@ -88,11 +88,11 @@
                     {{csrf_field()}}
                     <div style="margin-bottom: 15px">
                     <label for="user_name">Username</label>
-                    <input id="user_name" type="text" name="user_name">
+                    <input id="user_name" type="text" name="user_name" value="admin">
                     </div>
                     <div style="margin-bottom: 10px">
                         <label for="password">Password </label>
-                        <input id="password" type="text" name="password">
+                        <input id="password" name="password" type="password" value="123456">
                     </div>
                     <button>Login</button>
                 </form>

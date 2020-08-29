@@ -15,17 +15,18 @@ class Appointment extends Model
         'booked_detail' => 'object'
     ];
 
-    public function getAppointments($conditions = []) {
-    	return $this->from('appointments as apm')
+    public function getAppointments($conditions = [], $paginate = 0) {
+    	$res = $this->from('appointments as apm')
     		->leftJoin('users as emp', 'apm.employee_id', 'emp.id')
     		->leftJoin('users as cus', 'apm.customer_id', 'cus.id')
     		->where($conditions)
-    		->select('apm.*', 'cus.name as cus_name', 'emp.name as emp_name')
-    		->get();
+    		->select('apm.*', 'cus.name as cus_name', 'emp.name as emp_name');
+    	return $paginate ? $res->paginate($paginate) : $res->get();
     }
 
-    public function getEmployeeBooked($employee_id, $date) {
+    public function getEmployeeBookedTime($employee_id, $date, $except = []) {
     	return $this->where([['status', 2], ['employee_id', $employee_id], ['date', $date]])
+    		->whereNotIn('id', $except)
     		->pluck('booked_time')->toArray();
 	}
 
@@ -35,6 +36,8 @@ class Appointment extends Model
 			$obj = $this->where('customer_id', $data['customer_id'])
 				->find($data['id']);
 			$obj->fill($data);
+
+			//Make detail if something change
 			if ($obj->isDirty('location_id') || $obj->isDirty('service_id') || $obj->isDirty('employee_id')) {
 				$obj->booked_detail = $this->makeAppointmentDetail($obj);
 			}
@@ -53,8 +56,9 @@ class Appointment extends Model
 			'service_name'	=> $location->services()->find($obj->service_id)->name ?? 'Unknown service',
 			'employee_name'	=> $location->employees()->find($obj->employee_id)->name  ?? 'Unknown employee',
 			'price'			=> $location->service_employees()->where([
-									['service_id', $obj->service_id], ['employee_id', $obj->employee_id]
-								])->first()->name ?? 'Unknown price'
+									['service_id', $obj->service_id],
+									['employee_id', $obj->employee_id]
+								])->first()->price ?? 'Unknown price'
 		];
 	}
 }

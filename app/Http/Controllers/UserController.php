@@ -7,6 +7,7 @@ use Auth;
 use Hash;
 use Illuminate\Support\Str;
 use Cookie;
+use App\User;
 
 class UserController extends Controller
 {
@@ -15,6 +16,26 @@ class UserController extends Controller
 	public function __construct() {
 		$this->model = app('App\User');
 	}
+
+    public function checkCusLogin(Request $req) {
+        $authorize = Cookie::get('Cus-Authorization');
+        $conditions = [
+            ['api_token', $authorize],
+            ['user_type', 3],
+            ['api_token', '!=', ''],
+            ['is_active', 1]
+        ];
+        $user = User::where($conditions)->whereNotNull('api_token')->first();
+
+        if ($user) {
+            $res['success'] = true;
+            $res['data'] = Auth::user()->only('id', 'name', 'is_trusted', 'phone', 'address');
+            return response($res)->cookie('Cus-Authorization', $user->api_token, 720);
+        } else {
+            return ['success' => false];
+        }
+
+    }
 
     public function cusLogin(Request $req) {
         $res = [
@@ -38,6 +59,11 @@ class UserController extends Controller
     	 	]
     	 );
         
+        // Check be blocked
+        if($user->is_active == 0) {
+            return ['success' => false, 'error' => 'You was blocked, please contact admin for more detail'];
+        }
+
         // change login token every login
         $user->api_token = $loginToken;
         $user->save();
@@ -68,7 +94,7 @@ class UserController extends Controller
     }
 
     public function logout() {
-    	Auth::logout();
+        return response(['success' => true])->cookie('Cus-Authorization', '', 720);
     }
 
     public function updateCustomerProfile(Request $req) {

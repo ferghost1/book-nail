@@ -1,20 +1,20 @@
 import {axios} from 'Src/generalLib';
 export default {
-	checkLogin(context) {
-		if (!FB) return;
-		FB.getLoginStatus(res => {
-			if (res.status != 'connected') return;
-			console.log(res);
-			// request token and user id to api save session
-			this.login(context, res.authResponse);
-		})
+	checkCusLogin(context) {
+		return axios.post('users/checkCusLogin').then((res) => {
+			let resData = res.data;
+			if (resData.success) {
+				_.each(res.data.data, (prop, key) => {
+		          context.$set(context.user, key, prop);
+		        });
+			}
+		});
 	},
 	login(context, data) {
 		return axios.post('users/cusLogin', data).then((res) => {
 			let resData = res.data;
 			if (!resData.success) {
 				swal('Some thing went wrong, please try again!');
-				FB.logout();
 				return;
 			}
 

@@ -7,31 +7,11 @@ export default {
 	servicesByLocation: null,
 	employeeByService: null,
 	getLocations() {
-		if (this.locations) {
-			return this.locations;
-		}
-
-		// call api here
-		this.locations = {
-	      	1: {
-	      		id: 1,
-	        	name: 'Like shit store',
-	        	address: 'UG09 Chifley Plaza 2 Chifley Square Sydney NSW 2000 Australia',
-	        	phone: '15372893852',
-	        	description: 'thich thi ghi zo',
-	        	show: false
-	      	},
-	      	2: {
-	      		id:2,
-	        	name: 'Like dick store',
-	        	address: 'UG09 Chifley Plaza 2 Chifley Square Sydney NSW 2000 Australia',
-	        	phone: '15372893852',
-	        	description: 'thich thi ghi zo',
-	        	show: false
-	      	}
-	    }
-		return this.locations;
+		return axios.get('booking/getLocations').then( res => {
+			return res.data && res.data.success ? res.data.data : []; 
+		});
 	},
+
 	getServices() {
 		if (this.services) {
 			return this.services;
@@ -52,8 +32,25 @@ export default {
 		return services;
 	},
 	getServiceByLocation(locationId) {
-		let services = this.getServices();
-		return _.filter(this.getServices(), service => service.location_id == locationId);
+		return axios.get('booking/getServiceByLocation', {params: {location_id: locationId}}).then(res => {
+			return res.data && res.data.success ? res.data.data : [];
+		});
+	},
+	getServiceRelation(locationId) {
+		return axios.get('booking/getServiceRelation', {params: {location_id: locationId}}).then(res => {
+			return res.data && res.data.success ? res.data.data : [];
+		});
+	},
+	getEmployeeByLocation(location_id) {
+		return axios.get('booking/getEmployeeByLocation', {params: {location_id: location_id}}).then(res => {
+			return res.data && res.data.success ? res.data.data : [];
+		});
+	},
+	getEmployeeBookedTime(employee_id, date, except = []) {
+		let params = {employee_id, date, except};
+		return axios.get('booking/getEmployeeBookedTime', {params}).then(res => {
+			return res.data && res.data.success ? res.data.data : [1, 2, 3, 4];
+		});
 	},
 	getEmployeesByServices(serviceId) {
 		if(this.employeeByService && !serviceId) {
@@ -85,9 +82,10 @@ export default {
 		let appointments = this.getAppointmentsBy(['employee_id', employeeId]);
 		return _.filter(appointments, appointment => appointment.employee_id == employeeId);
 	},
-	getCustomerAppointment(user, orderBy) {
-		let appointments = this.getAppointmentsBy(['customer_id', user.id]);
-		return _.filter(appointments, appointment => moment(appointment.date) >= moment(orderBy.from_date));
+	getCustomerAppointment(params) {
+		return axios.get('booking/getCustomerAppointments', {params}).then(res => {
+			return res.data && res.data.success ? res.data.data : null;
+		});
 	},
 	getEmployeeSchedule(employeeId, date) {
 		//call api to
@@ -96,8 +94,12 @@ export default {
 			return appointment.status == 2 && appointment.date == date;
 		});
 	},
-	book(bookData) {
+	book(data) {
 		// call api here to save appointment
+		return axios.post('booking/book', data).then(res => {
+			return res.data;
+		});
+
 		let appointments = JSON.parse(sessionStorage.getItem('appointments')) || [];
 		var oldBookData = null;
 		if (bookData.id) {

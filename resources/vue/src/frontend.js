@@ -7,7 +7,7 @@ import {axios} from 'Src/generalLib';
 import pageInfoApi from 'Api/page_info';
 import userApi from 'Api/user';
 import swal from 'sweetalert';
-// import App from './components/App.vue';
+
 Vue.config.devtools = true;
 window.Vue = Vue;
 Vue.use(VueRouter);
@@ -33,6 +33,14 @@ window.app = new Vue({
 		}
   	},
 	methods: {
+		init() {
+			let self = this;
+			this.$router.push('booking');
+			_.merge(this.page, pageInfoApi.getPageInfo());
+			setTimeout(function() {
+				userApi.checkCusLogin(self);
+			}, 1500);
+		},
 		changePage: function(pageName, event = {}) {
 			window.event = event;
 			if(event.target)
@@ -41,15 +49,14 @@ window.app = new Vue({
 		},
 		logout() {
 			swal({
-				text: 'Do you want sure to logout?',
+				text: 'Do you want to logout?',
 				icon: 'warning',
 				buttons: true
 			}).then(res => {
 				if (res) {
 					userApi.logout(this).then(() => {
-						FB.logout();
-						this.$router.push('booking');
-						this.$forceUpdate();
+						FB.api(`/${FB.getUserID()}/permissions`,'delete', res => res);
+						location.reload();
 					});
 					
 					
@@ -58,12 +65,7 @@ window.app = new Vue({
 		},
 	},
 	created: function() {
-		let self = this;
-		this.$router.push('booking');
-		_.merge(this.page, pageInfoApi.getPageInfo());
-		setTimeout(function() {
-			userApi.checkLogin(self);
-		}, 1500);
+		this.init();
 	},
 	computed: {
 		currentPage() {

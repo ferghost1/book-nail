@@ -6,8 +6,7 @@ window.moment = moment;
 // Put config here
 const axios = axiosBase.create({
   baseURL: 'https://booknail.local/',
-  timeout: 1000,
-  responseType: 'json'
+  responseType: 'json',
   timeout: 3000
 });
 

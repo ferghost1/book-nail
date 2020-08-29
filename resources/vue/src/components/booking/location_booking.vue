@@ -19,7 +19,7 @@
          </div>
        </div>
      </div>
-     </div>
+  </div>
      
   </div>
 </template>
@@ -36,23 +36,30 @@
   var comp = {
     data() { return data},
     methods:{
+      init() {
+            window.lcomp = this;
+            this.bookData = this.getComp('booking').bookData;
+            this.getLocations();
+      },
+      getLocations() {
+        bookingApi.getLocations().then(res => {
+            _.map(res, it => it.show = false);
+            this.locations = res;
+        });
+      },
       selectLocation(locationId) {
         if (this.bookData.location_id != locationId) {
-          this.bookData.service_id = 0;
-          this.bookData.employee_id = 0;
-          this.bookData.time_space.length = 0;
+            this.bookData.service_id = 0;
+            this.bookData.employee_id = 0;
+            this.bookData.time_space.length = 0;
         }
 
         this.bookData.location_id = locationId;
         this.getComp('booking').step = 2;
       },
     },
-    computed: {
-    },
     created: function() {
-      window.lcomp = this;
-      this.bookData = this.getComp('booking').bookData;
-      this.locations = bookingApi.getLocations();
+        this.init();
     }
   };
 

@@ -18,8 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'phone', 'password', 'social_id', 'social_type', 'is_trusted', 'is_active',
-        'user_type'
+        'location_id', 'user_name', 'password', 'name', 'email', 'phone', 'address', 'social_id', 'social_type', 'is_trusted', 'is_active','user_type'
     ];
 
     /**
@@ -44,8 +43,9 @@ class User extends Authenticatable
         return $this->hasMany('App\ServiceEmployee', 'employee_id', 'id');
     }
 
-    public function getUsers($conditions) {
-        return $this->where($conditions)->get();
+    public function getUsers($conditions, $paginate = 0) {
+        $res = $this->where($conditions);
+        return $paginate ? $res->paginate($paginate) : $res->get();
     }
 
     public function saveUser($data, $where = [], $fields = []) {

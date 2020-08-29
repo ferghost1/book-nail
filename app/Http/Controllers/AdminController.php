@@ -63,7 +63,7 @@ class AdminController extends Controller
     public function saveEmployee(Request $req) {
     	// Validate
 
-    	$data = $req->only('id', 'user_name', 'password', 'name', 'email', 'phone', 'is_active');
+    	$data = $req->only('id', 'location_id', 'user_name', 'password', 'name', 'email', 'phone', 'address', 'is_active');
     	$data['user_type'] = 2;
     	$res['data'] = app('App\User')->saveUser($data);
 		$res['success'] = true;
@@ -90,18 +90,21 @@ class AdminController extends Controller
 
     public function getAppointments(Request $req) {
     	// validate
-        if(session('key')) {
-            echo 'co luu' . session('key');
-        } else {
-            echo 'save moi ' . session('key', 123456);
-        }
-    	$conditions = [['apm.date', '>=', $req->from_date]];
+    	$conditions = [
+            ['apm.date', '>=', $req->from_date],
+            ['apm.location_id', $req->location_id]
+        ];
+
+        // can search employee only when have name
     	if (!empty($req->name)) {
     		$keySearch = $req->user_type == 3 ? 'cus.name' : 'emp.name';
     		$conditions[] = [$keySearch, 'like', "%$req->name%"];
     	}
-    	$res['data'] = $query = app('App\Appointment')->getAppointments($conditions);
-        return $res;
+
+        return [
+            'success'   => true,
+            'data'      => app('App\Appointment')->getAppointments($conditions, 1)
+        ];
     }
 
     public function saveAppointment(Request $req) {
@@ -118,7 +121,11 @@ class AdminController extends Controller
 
         $data = $req->only('service_id', 'employees');
         $serviceEmployees = collect($data['employees'])->map(function($emp) use ($data) {
-            return array_merge($emp, ['service_id' => $data['service_id']]);
+            return [
+                'service_id' => $data['service_id'],
+                'employee_id' => $emp['employee_id'],
+                'price' => $emp['price'] 
+            ];
         })->toArray();
 
         app('App\ServiceEmployee')->saveServiceEmployee($serviceEmployees, $data['service_id']);
@@ -129,7 +136,6 @@ class AdminController extends Controller
 
     public function getUsers(Request $req) {
         // validate
-
         $data = $req->only('name', 'user_type');
         $conditions = [['user_type', $data['user_type']]];
         if (!empty($data['name'])) {
@@ -138,10 +144,38 @@ class AdminController extends Controller
 
         return [
             'success'   => true,
-            'data'      => app('App\User')->getUsers($conditions)
+            'data'      => app('App\User')->getUsers($conditions, $page = 1)
         ];
     }
 
+    public function getServiceByLocation(Request $req) {
+        $services = app('App\Service')->getServiceByLocation(['location_id' => $req->location_id]);
+        $services->load([
+            'employees' => function($query) {
+                $query->select('users.name', 'users.id', 'service_employees.price');
+            }
+        ]);
+
+        return [
+            'success' => true,
+            'data'  => $services
+        ];
+    }
+
+    public function saveCustomer(Request $req) {
+        // Validate
+        $data = $req->only('id', 'name', 'phone', 'email', 'address', 'is_trusted', 'is_active');
+        if(empty($data['id']))
+            return ['success' => false];
+
+        $conditions = [['user_type', 3]];
+        
+        return [
+            'success'   => true,
+            'data'      => app('App\User')->saveUser($data, $conditions)
+        ];
+    }
+    
     public function savePageInfo() {
 
     }
