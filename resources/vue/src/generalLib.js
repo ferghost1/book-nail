@@ -5,7 +5,6 @@ import _ from 'lodash';
 window.moment = moment;
 // Put config here
 const axios = axiosBase.create({
-  baseURL: 'https://booknail.local/',
   responseType: 'json',
   timeout: 3000
 });
