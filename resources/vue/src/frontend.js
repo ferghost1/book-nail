@@ -55,8 +55,10 @@ window.app = new Vue({
 			}).then(res => {
 				if (res) {
 					userApi.logout(this).then(() => {
-						FB.api(`/${FB.getUserID()}/permissions`,'delete', res => res);
-						location.reload();
+						FB.getLoginStatus(res => {
+							FB.api(`/${res.authResponse.userID}/permissions`,'delete', res => res);
+							location.reload();
+						})
 					});
 					
 					
