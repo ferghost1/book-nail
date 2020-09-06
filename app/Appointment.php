@@ -15,13 +15,17 @@ class Appointment extends Model
         'booked_detail' => 'object'
     ];
 
-    public function getAppointments($conditions = [], $paginate = 0) {
+    public function getAppointments($conditions = [], $params = []) {
     	$res = $this->from('appointments as apm')
     		->leftJoin('users as emp', 'apm.employee_id', 'emp.id')
     		->leftJoin('users as cus', 'apm.customer_id', 'cus.id')
     		->where($conditions)
-    		->select('apm.*', 'cus.name as cus_name', 'emp.name as emp_name');
-    	return $paginate ? $res->paginate($paginate) : $res->get();
+			->select('apm.*', 'cus.name as cus_name', 'emp.name as emp_name');
+
+		if (!empty($params['order_by']))
+			$res->orderBy(...$params['order_by']);
+			
+    	return !empty($params['paginate']) ? $res->paginate($params['paginate']) : $res->get();
     }
 
     public function getEmployeeBookedTime($employee_id, $date, $except = []) {

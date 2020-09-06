@@ -73,9 +73,14 @@ class BookingController extends Controller
 			['apm.date', '>=', $req->from_date ?? Carbon::now()->format('Y-m-d')]
 		];
 
+		$params = [
+			'paginate' => 3,
+			'order_by'	=> ['date', 'desc']
+        ];
+
 		return [
 			'success'	=> true,
-			'data'		=> app('App\Appointment')->getAppointments($conditions, 3)
+			'data'		=> app('App\Appointment')->getAppointments($conditions, $params)
 		];
 	}
 

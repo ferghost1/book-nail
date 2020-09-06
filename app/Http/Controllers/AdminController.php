@@ -113,9 +113,13 @@ class AdminController extends Controller
     		$conditions[] = [$keySearch, 'like', "%$req->name%"];
     	}
 
+        $params = [
+            'paginate' => 3
+        ];
+
         return [
             'success'   => true,
-            'data'      => app('App\Appointment')->getAppointments($conditions, 3)
+            'data'      => app('App\Appointment')->getAppointments($conditions, $params)
         ];
     }
 
