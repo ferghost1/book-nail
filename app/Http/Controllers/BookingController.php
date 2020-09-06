@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use Carbon\Carbon;
 use App\Appointment;
+use App\Http\Requests\BookingRequest;
 
 class BookingController extends Controller
 {
@@ -79,14 +80,17 @@ class BookingController extends Controller
 	}
 
 
-	public function book(Request $req) {
-		// check when update whether appoitmennt is belong to customer and is it can be edit
-		// can not edit when decline
-		// can edit when user was blocked
-		// validate here
-
+	public function book(BookingRequest $req) {
 		$bookData = $req->only('id', 'location_id', 'service_id', 'employee_id', 'date', 'time_space');
 		$bookData['customer_id'] = Auth::user()->id;
+		
+		$res = ['success' 	=> false, 'errors'	=> []];
+		$validate = $req->validateBook($bookData);
+		if ($validate->fails()) {
+			$res['errors'] = $validate->errors()->all();
+			return $res;
+		}
+		
 		$bookData['status'] = Auth::user()->is_trusted ? 2 : 1;
 		$bookedTime = app('App\Appointment')->getEmployeeBookedTime($bookData['employee_id'], $bookData['date'], [$bookData['id'] ?? '']);
 		if ($bookData['status'] == 2) {
@@ -94,6 +98,12 @@ class BookingController extends Controller
 		} else {
 			$bookData['booked_time'] = 0;
 		}
+		$conditions = [
+			['customer_id', $bookData['customer_id']], // belong to current customer
+			['status', '!=', 3], // can not edit decline apm
+			['date', '>', Carbon::now()->format('y-m-d')] // must be future apm
+		];
+
 		$res['data'] = app('App\Appointment')->saveAppointment($bookData);
 		$res['success'] = true;
 		return $res;

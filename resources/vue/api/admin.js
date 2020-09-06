@@ -12,9 +12,7 @@ export default {
 		});
 	},
 	saveAppointment(data) {
-		return axios.post('admin/saveAppointment', data).then(res => {
-			return res.data;
-		});
+		return axios.process(axios.post('admin/saveAppointment', data));
 	},
 	getUsers(params) {
 		return axios.get('admin/getUsers', {params}).then(res => {

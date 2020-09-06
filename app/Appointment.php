@@ -30,10 +30,10 @@ class Appointment extends Model
     		->pluck('booked_time')->toArray();
 	}
 
-	public function saveAppointment($data) {
+	public function saveAppointment($data, $conditions = []) {
 		if (!empty($data['id'])) {
 			// check whether appointment is owned by customer
-			$obj = $this->where('customer_id', $data['customer_id'])
+			$obj = $this->where($conditions)
 				->find($data['id']);
 			$obj->fill($data);
 

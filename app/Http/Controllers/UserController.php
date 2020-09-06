@@ -8,6 +8,7 @@ use Hash;
 use Illuminate\Support\Str;
 use Cookie;
 use App\User;
+use App\Http\Requests\UserRequest; 
 
 class UserController extends Controller
 {
@@ -97,9 +98,17 @@ class UserController extends Controller
         return response(['success' => true])->cookie('Cus-Authorization', '', 720);
     }
 
-    public function updateCustomerProfile(Request $req) {
-        $data = $req->only('name', 'phone', 'email', 'address');
+    public function updateCustomerProfile(UserRequest $req) {
+        $res = ['success' => false, 'errors' => []];
+        $data = $req->only('name', 'phone', 'address');
         $data['id'] = Auth::user()->id;
+
+        $validate = $req->validateUpdateCustomerProfile($data);
+		if ($validate->fails()) {
+			$res['errors'] = $validate->errors()->all();
+			return $res;
+		}
+        
         $res['data'] = app('App\User')->saveUser($data)->only(array_keys($data));
         $res['success'] = true;
         return $res;

@@ -57,7 +57,6 @@
             location_id: '',
             user_name: '',
             password: '',
-            email: '',
             name: '',
             phone: '',
             address: '',

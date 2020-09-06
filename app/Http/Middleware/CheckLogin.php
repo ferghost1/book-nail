@@ -36,8 +36,7 @@ class CheckLogin
 
         $conditions = [
             ['api_token', $authorize],
-            ['user_type', $userType],
-            ['is_active', 1]
+            ['user_type', $userType]
         ];
         $user = User::where($conditions)->whereNotNull('api_token')->first();
 
@@ -45,7 +44,7 @@ class CheckLogin
             Auth::login($user);
             return $next($request);
         } else {
-            return $redirectUrl ? redirect($redirectUrl) : die('mm');
+            return $redirectUrl ? redirect($redirectUrl) : die(json_encode(['success'=> false, 'error'=> 'error authorized']));
         }
 
     }

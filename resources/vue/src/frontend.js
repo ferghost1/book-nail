@@ -7,9 +7,11 @@ import {axios} from 'Src/generalLib';
 import pageInfoApi from 'Api/page_info';
 import userApi from 'Api/user';
 import swal from 'sweetalert';
+import Notifications from 'vue-notification'
 
 Vue.config.devtools = true;
 window.Vue = Vue;
+Vue.use(Notifications);
 Vue.use(VueRouter);
 Vue.mixin(gMixin);
 window.app = new Vue({

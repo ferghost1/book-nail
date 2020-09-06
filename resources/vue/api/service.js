@@ -13,9 +13,7 @@ export default {
 		console.log('deleting location');
 	},
 	saveEmployee(data) {
-		return axios.post('admin/saveEmployee', data).then(res => {
-			return res.data;
-		});
+		return axios.process(axios.post('admin/saveEmployee', data));
 	},
 	blockEmployee() {
 		console.log('blocking employee');

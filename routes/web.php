@@ -59,10 +59,9 @@ Route::get('booking/getEmployeeByLocation', 'BookingController@getEmployeeByLoca
 
 // type user = 3 is customers
 Route::middleware(['checkLogin:3'])->group(function () {
-	Route::post('booking/book', 'BookingController@book');
+	Route::post('booking/book', 'BookingController@book')->middleware('checkBlockedUser');
 	Route::post('users/updateCustomerProfile', 'UserController@updateCustomerProfile');
 	Route::get('booking/getCustomerAppointments', 'BookingController@getCustomerAppointments');
-	Route::post('booking/updateProfile', 'UserController@updateProfile');
 });
 
 // type user = 2 is staffs

@@ -43,23 +43,16 @@
           <div class="appointment-detail-info">
             <p>At store: {{appointment.booked_detail.location_name}}</p>
             <p>Service: {{appointment.booked_detail.service_name}} - ${{appointment.booked_detail.price}}</p>
-            <p>By: {{appointment.booked_detail.emp_name}}</p>
-            <p>Be booked at: 
-                <span v-if="appointment.status == 2">
-                        {{TIME_SPACE[appointment.booked_time]}}
-                </span>
-                <span v-else>
-                    Wating for check from admin
-                </span>
-            </p>
+            <p>By: {{appointment.booked_detail.employee_name}}</p>
+            <p v-if="appointment.status == 2">Be booked at: {{TIME_SPACE[appointment.booked_time]}}</p>
             <p>
-                <span v-if="appointment.status == 1">
+                <span class="text-warning" v-if="appointment.status == 1">
                     This appointment is waiting check from admin
                 </span>
-                <span v-else-if="appointment.status == 2">
+                <span class="text-success" v-else-if="appointment.status == 2">
                     This appointment was approved, Please visit at booked time above
                 </span>
-                <span v-else>
+                <span class="text-fail" v-else>
                     Your appointment was reject by some problem, please contact admin
                 </span>
             </p>

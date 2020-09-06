@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Http\Requests\AppointmentRequest;
+use App\Http\Requests\AdminRequest;
+
 class AdminController extends Controller
 {
     public function saveLocation(Request $req) {
@@ -60,11 +63,20 @@ class AdminController extends Controller
     	}
     }
 
-    public function saveEmployee(Request $req) {
-    	// Validate
-
+    public function saveEmployee(AdminRequest $req) {
     	$data = $req->only('id', 'location_id', 'user_name', 'password', 'name', 'email', 'phone', 'address', 'is_active');
-    	$data['user_type'] = 2;
+        if(empty($data['password']))
+            unset($data['password']);
+
+        $res = ['success' 	=> false, 'errors'	=> []];
+        $validate = $req->validateSaveEmployee($data);
+		if ($validate->fails()) {
+			$res['errors'] = $validate->errors()->all();
+			return $res;
+        
+        }
+        
+        $data['user_type'] = 2;
     	$res['data'] = app('App\User')->saveUser($data);
 		$res['success'] = true;
 		return $res;
@@ -107,8 +119,13 @@ class AdminController extends Controller
         ];
     }
 
-    public function saveAppointment(Request $req) {
+    public function saveAppointment(AppointmentRequest $req) {
     	$data = $req->only('id', 'customer_id', 'location_id', 'date', 'service_id', 'employee_id', 'booked_time', 'status');
+
+        $validator = $req->validateSaveAppointment($data);
+        if ($validator->fails()) {
+            return ['success' => false, 'errors'=> $validator->errors()->all()];
+        }
 
     	return [
     		'success' 	=> true,

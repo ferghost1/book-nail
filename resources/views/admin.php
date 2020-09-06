@@ -50,8 +50,10 @@
 				  </keep-alive>
 				</transition>
 			</section> 
+			<notifications />
 		</div>
 	</div>
+
 	<script src="<?php echo asset('js/admin.js')?>"></script>
 </body>
 </body>

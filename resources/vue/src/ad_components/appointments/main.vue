@@ -79,7 +79,7 @@
                                 <div class="item-title-detail-col1">
                                     <div>
                                         <span>{{item.booked_detail ? item.booked_detail.service_name : 'Unknown service'}}</span>
-                                        <span> - {{item.booked_detail ? item.booked_detail.price : 'Unknown price'}}</span>
+                                        <span> - {{item.booked_detail ? item.booked_detail.price + '$' : 'Unknown price'}}</span>
                                     </div>
                                     <div>
                                         <span>for {{item.cus_name}}</span>
@@ -90,10 +90,19 @@
                                     <div>date {{item.date}}</div>
                                     <div>at {{TIME_SPACE[item.booked_time] || 'Not set'}}</div>
                                 </div>
+                                <div style="margin-left: 10px; font-size: 25px" class="arrow">
+                                    <b v-if="item.show">&#9662;</b>
+                                    <b v-else>&#9656;</b>
+                                </div>
                             </div>
                         </div>
                         <!-- <div class="divide-line"></div> -->
                         <div class="item-detail" v-if="item.show">
+                            <div class="errors-box item-row" v-if="!lodash.isEmpty(errors)">
+                                <ul>
+                                    <li v-for="err in errors" class="error-detail">{{err}}</li>     
+                                </ul>
+                            </div>
                             <form @submit.prevent="saveAppointment()">    
                                 <div class="item-row">
                                     <span class="item-detail-col1">Date</span>
@@ -127,7 +136,7 @@
                                 <div class="item-row">
                                     <span class="item-detail-col1">Booked time</span>
                                     <span class="item-detail-col2">
-                                        <select v-model="selectingItemTemp.booked_time">
+                                        <select v-model.number="selectingItemTemp.booked_time">
                                             <option value="0">Set time</option>
                                             <option v-for="time in validBookTime" :value="time.k">{{time.v}}
                                                 <span v-if="time.status == 1">&#10060;</span>
@@ -186,6 +195,7 @@
   const data = {
     registerBy: 'Appointments',
     TIME_SPACE, STATUS_DESC,
+    errors: [],
     locations: [],
     services: [],
     employees: [],
@@ -221,28 +231,26 @@
             this.getLocations();
         },
         saveAppointment() {
-            // if accept need set certain time for appointment
-            if (this.selectingItemTemp.status == 2 && this.selectingItemTemp.booked_time == 0) {
-                swal('Please set time for appointment if you want approved this')
-                return;
-            }
             adminApi.saveAppointment(this.selectingItemTemp).then(res => {
-                if (res && res.success) {
+                this.errors = res.errors || [];
+                if (res.success) {
                     let item = _.find(this.appointments, it => {
                         return it.id == this.selectingItemTemp.id;
                     });
                     _.merge(item, res.data);
-                } else {
-                    swal('Something went wrong pls try again!');
+                    this.$notify({type: 'success', text: 'Appointment was saved'})
                 }
             })
         },
         getLocations() {
             return bookingApi.getLocations().then(res => {
                 this.locations = res;
+                this.selectedLocationId = localStorage.getItem('selectedLocationId') || 0;
+                this.selectLocation();
             });
         },
         selectLocation() {
+            localStorage.setItem('selectedLocationId', this.selectedLocationId);
             this.getServices();
             this.getAppointments();
             this.getEmployees();
@@ -280,7 +288,8 @@
              this.sort[sortOps] = this.sort[sortOps] == 'asc' ? 'desc' : 'asc';
         },
         showDetail(item) {
-            this.selectingItemTemp = _.cloneDeep(item);    
+            this.errors = []; 
+            this.selectingItemTemp = _.cloneDeep(item);
             let tempStatus = item.show;
             _.map(this.appointments, amp => amp.show = false);
             item.show = !tempStatus;
@@ -320,7 +329,7 @@
             let first = this.sort.type[0];
             let second = this.sort.type[1];
             let items = _.orderBy(ap.appointments, this.sort.type, [this.sort[first], this.sort[second]]);
-            return _.filter(items, it => _.includes(this.sort.show, it.status));
+            return _.filter(items, it => _.includes(this.sort.show, parseInt(it.status)));
         }
     },
     created: function() {
@@ -376,7 +385,8 @@
     .item-title .item-title-detail .item-title-detail-col1 {
         display: flex;
         flex-direction: column;
-        margin-right: 15px
+        min-width: 200px;
+        margin-right: 25px
     }
     .item-title .item-title-detail .item-title-detail-col2 {
         display: flex;

@@ -58,6 +58,12 @@
         this.getComp('booking').step = 2;
       },
     },
+    computed: {
+        testData: {
+            get() {console.log('get ',  this.registerBy);return this.getComp('booking').testData},
+            set(value) {console.log('set ',  this.registerBy);this.getComp('booking').testData = value}
+        }
+    },
     created: function() {
         this.init();
     }

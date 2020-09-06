@@ -96,30 +96,6 @@ export default {
 	},
 	book(data) {
 		// call api here to save appointment
-		return axios.post('booking/book', data).then(res => {
-			return res.data;
-		});
-
-		let appointments = JSON.parse(sessionStorage.getItem('appointments')) || [];
-		var oldBookData = null;
-		if (bookData.id) {
-			// Edit
-			let oldBookData = _.find(appointments, {id: bookData.id});
-			oldBookData.time_space.length = 0;
-			_.merge(oldBookData, bookData);
-			bookData.booked_time = _.min(bookData.time_space);
-		} else { 
-			// Create 
-			bookData.id = Math.floor(Math.random() * 10000);
-			bookData.status = Math.floor(Math.random() * 10) >= 5 ? 1 : 2;
-			if (bookData.status == 2) {
-				bookData.booked_time = _.min(bookData.time_space);
-			}
-	        appointments.push(bookData);
-		}
-        sessionStorage.setItem('appointments', JSON.stringify(appointments));
-        return bookData;
-
-		// if user is trusted appointment will be set time, no need admin check
+		return axios.process(axios.post('booking/book', data));
 	},
 }

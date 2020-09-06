@@ -1,5 +1,10 @@
 <template>
   <div class="11">
+	<div class="errors-box item-row" v-if="!lodash.isEmpty(errors)">
+		<ul>
+			<li v-for="err in errors" class="error-detail">{{err}}</li>     
+		</ul>
+	</div>
     <!-- <p>You are booking service from {{selectedLocation.name}}</p> -->
     <p>For date: <input type="date" v-model="bookData.date" @change="changeDate()"></p>
     <p>
@@ -43,7 +48,7 @@
 
     <!-- Sync when change location or get booked time of employee when change info-->
     <input type="hidden" v-if="changeLocation + getEmployeeBookedTime">
-
+    <input type="hidden" v-if="testData">
   </div>
 </template>
 
@@ -53,7 +58,8 @@
   import swal from 'sweetalert';
 
   const data = {
-    registerBy: 'cService',
+	registerBy: 'cService',
+	errors: [],
     services: [],
     employees: [],
     employeeBookedTime: [],
@@ -84,14 +90,14 @@
             }
 
             // check whether customer select service, employee and there selected prop be in list
-            let selectedService = _.find(this.services, ser => ser.id == this.bookData.service_id);
-            let selectedEmployee = _.find(this.serviceRelations, sr => sr.employee_id == this.bookData.employee_id);
-            let selectedTimespace = _.difference(this.bookData.time_space, this.employeeBookedTime);
+            // let selectedService = _.find(this.services, ser => ser.id == this.bookData.service_id);
+            // let selectedEmployee = _.find(this.serviceRelations, sr => sr.employee_id == this.bookData.employee_id);
+            // let selectedTimespace = _.difference(this.bookData.time_space, this.employeeBookedTime);
 
-            if (!selectedService || !selectedEmployee || _.isEmpty(selectedTimespace)) {
-                swal('Please fulfill your appointment to continue');
-                return;
-            }
+            // if (!selectedService || !selectedEmployee || _.isEmpty(selectedTimespace)) {
+            //     swal('Please fulfill your appointment to continue');
+            //     return;
+            // }
 
             // confirm book
             swal({
@@ -101,17 +107,18 @@
                 buttons: true
             }).then(isDone => {
                 if (isDone) {
+					this.errors = [];
                     // save appointment here
                     let data = this.bookData;
                     
                     bookingApi.book(this.bookData).then(res => {
-                        console.log(res);
-                        if (!res.success)
-                            swal('can not book please try again');
-
-                        this.getComp('booking').newAppointment();
-                        this.getComp('manageAppointment') && this.getComp('manageAppointment').getAppointments();
-                        this.$router.push('manage_appointment');
+                        if (res.success) {
+                        	this.getComp('booking').newAppointment();
+							this.getComp('manageAppointment') && this.getComp('manageAppointment').getAppointments();
+							this.$router.push('manage_appointment');
+                        } else {
+							this.errors = res.errors;
+						}
                     });
                     // make new data appointment
                     
@@ -155,7 +162,11 @@
          },
          employeeByService() {
             return _.filter(this.serviceRelations, se => se.service_id == this.bookData.service_id);
-         }
+         },
+         testData: {
+            get() {console.log('get ',  this.registerBy);return this.getComp('cLocation').testData},
+            set(value) {console.log('set ',  this.registerBy);this.getComp('cLocation').testData = value}
+        }
     }
   };
 

@@ -29,4 +29,7 @@ export default {
 			_.each(context.user, (prop, key) => delete context.user[key]);
 		});
 	},
+	updateCustomerProfile(data) {
+		return axios.process(axios.post('users/updateCustomerProfile', data));
+	}
 }

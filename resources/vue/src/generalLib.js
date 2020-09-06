@@ -8,6 +8,14 @@ const axios = axiosBase.create({
   responseType: 'json',
   timeout: 3000
 });
+axios.process = function(obj) {
+	return obj.then(res => {
+		return res.data && res.data.success !== undefined ? res.data :  {success: false, error: 'Error code: ' + res.status}
+	})
+	.catch(res => {
+		return {success: false, error: res.message}
+	})
+}
 
 window.axios = axios;
 export {axios} 
