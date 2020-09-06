@@ -39,7 +39,7 @@ class AdminRequest extends FormRequest
     public function validateSaveEmployee($data) {
         return Validator::make($data, 
             [
-                'user_name' => ['required', Rule::unique('users')->ignore($data['id'])],
+                'user_name' => ['required', Rule::unique('users')->ignore($data['id'] ?? 0)],
                 'phone'     => 'digits_between:9,15',
                 'is_active' => 'required'
             ],
