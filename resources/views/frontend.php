@@ -24,20 +24,13 @@
 				<div id="logo-container">
 					<img src="images/logo.jpg">
 				</div>
-				<div id="slogan"> Neo Lai Co Shit</div>
+				<div id="slogan"> Nail Booking</div>
 			</header>
 			<section>
 				<div class="description">
-                    <span class="description-title">Select location</span>
+                    <span class="description-title">Demo version</span>
                     <div>
-						<p>
-							<strong>The Nail Lab is temporarily close until further notice</strong>
-							Our booking will be available again once the Covid-19 pandemic is over and public health and safety is no longer as risk. Thank you kindly for your understanding.
-						</p>
-						<p>Welcome to our Online Booking Service!</p>
-						<p>Please kindly reply to our confirmation message/email.</p>
-						<p>Your appointment will automatically be removed if we do not receive a response 4 hours prior to your appointment.</p>
-						<!-- <p>{{currentPage.description}}</p> -->
+						<p>This is demo version without beautiful design. Just be the ux and function</p>
 					</div>
 				</div>
 			</section>
