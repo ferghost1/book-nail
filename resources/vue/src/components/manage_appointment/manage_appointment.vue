@@ -85,6 +85,7 @@
   import bookingApi from 'Api/booking';
   import {TIME_SPACE} from 'Src/constants';
   import {data as initBookCompData} from 'Components/booking/booking.vue';
+import swal from 'sweetalert';
   const data = {
     registerBy: 'manageAppointment',
     TIME_SPACE,
@@ -98,7 +99,7 @@
     },
     paginate: {
         current_page: 1,
-        last_page: 3,
+        last_page: 1,
         go_to: ''
     },
     sortBy: ['date', 'status'],
@@ -115,9 +116,15 @@
             this.getAppointments();
         },
         getAppointments() {
-            let appointments = bookingApi.getCustomerAppointment({...this.orderBy, page: this.paginate.current_page}).then(res => {
-                    _.map(res, apm => apm.show = false);
-                    this.appointments = res;
+            bookingApi.getCustomerAppointment({...this.orderBy, page: this.paginate.current_page}).then(res => {
+					if (res.success) {
+						let resData = res.data;
+						this.paginate.last_page = resData.last_page;
+						_.map(resData.data, apm => apm.show = false);
+                    	this.appointments = resData.data;
+					} else {
+						swal(res.error);
+					}
                 });
         },
         edit(appointment) {
@@ -143,7 +150,7 @@
             page = page < 1 ? 1 : page;
             this.paginate.current_page = page;
             this.paginate.go_to = '';
-            this.getCustomers();
+            this.getAppointments();
         }
     },
     created() {

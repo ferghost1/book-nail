@@ -75,7 +75,7 @@ class BookingController extends Controller
 
 		return [
 			'success'	=> true,
-			'data'		=> app('App\Appointment')->getAppointments($conditions)
+			'data'		=> app('App\Appointment')->getAppointments($conditions, 3)
 		];
 	}
 

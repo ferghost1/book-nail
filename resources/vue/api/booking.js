@@ -83,9 +83,7 @@ export default {
 		return _.filter(appointments, appointment => appointment.employee_id == employeeId);
 	},
 	getCustomerAppointment(params) {
-		return axios.get('booking/getCustomerAppointments', {params}).then(res => {
-			return res.data && res.data.success ? res.data.data : null;
-		});
+		return axios.process(axios.get('booking/getCustomerAppointments', {params}));
 	},
 	getEmployeeSchedule(employeeId, date) {
 		//call api to

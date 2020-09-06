@@ -115,7 +115,7 @@ class AdminController extends Controller
 
         return [
             'success'   => true,
-            'data'      => app('App\Appointment')->getAppointments($conditions, 1)
+            'data'      => app('App\Appointment')->getAppointments($conditions, 3)
         ];
     }
 
