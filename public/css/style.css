@@ -192,3 +192,50 @@ input { font-size:11px; color: #909C96; font-weight:100; }
 /* small links under main online booking heading */
 a { font-size:12px; font-weight:100; color: #F89829; font-weight:bold; text-transform: uppercase;}
 legend { font-size:12px; font-weight:600; color: #F89829;  text-transform: uppercase;}
+.pagination {
+	margin: 7px auto;
+	text-align: center;
+}
+.pagination span, .pagination button {
+	margin: 1px 5px;
+	padding: 2px;
+}
+.vue-notification .notification-content{
+	color: white;
+}
+.text-success {
+	color: #9fdc86;
+}
+.text-fail {
+	color: #f27474;
+}
+.text-warning {
+	color: #f89829;
+}
+.item-row {
+    display: flex;
+    flex-direction: row;
+    background: white;
+    border-radius: 20px;
+    margin: 5px 0;
+    padding: 3px 10px 0;
+}
+.item-row .item-detail-col1 {
+    min-width: 30%;
+}
+.item-row .item-detail-col1 {
+    display: flex;
+    flex-direction: column;
+    margin-right: 15px
+}
+.item-row .item-detail-col2 {
+    display: flex;
+    flex-direction: column;
+}
+.errors-box {
+	color: red;
+}
+.errors-box ul{
+	max-width: 500px;
+	margin: 5px auto;
+}
